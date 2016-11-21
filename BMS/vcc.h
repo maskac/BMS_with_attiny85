@@ -1,20 +1,28 @@
+// read 1.1V reference computed back to Vcc voltage. single raw data
 long readVcc();
-float readVccpow(float kof1, float kof2, float kof3, int presnost);
 
+float readVccpow(float kof1, float kof2, float kof3, int presnost);
+// quadratic corection of readed Vcc
+// Y=AX^2 + BX + C  where A is kof1 , B is kof2, C is kof3
+// presnost is number of reades for average ADC 
 float readVccpow(float kof1, float kof2, float kof3, int presnost)
 {
     int i;
     float rawVoltage,corrVoltage;
-    for(i=1;i<=presnost;i++){
-    
+
+    for(i=1;i<=presnost;i++){    //read n-tymes for better accurance
     rawVoltage+=(readVcc()/1000.0);
     }
+    
+    //calculate average
     rawVoltage/=(float)presnost;
     
+   //calucate quadratic correction
    corrVoltage=kof1*rawVoltage*rawVoltage;
    corrVoltage+=kof2*rawVoltage;
    corrVoltage+=kof3;
 
+    //return corrected voltage
    return corrVoltage;
 }
 
@@ -39,7 +47,11 @@ long readVcc() {
   uint8_t high = ADCH; // unlocks both
 
   long result = (high<<8) | low;
-  //result = 1126400L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
+  
+  //for attiny85 maybe from some sources 1024 not 1023
+  //atmega 1023 is ok
+ //result = 1126400L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1024*1000
   result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000
+  
   return result; // Vcc in millivolts
 }
