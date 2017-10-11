@@ -10,7 +10,7 @@ float readVccpow(float kof1, float kof2, float kof3, int presnost)
     int i;
     float rawVoltage,corrVoltage;
 
-    for(i=1;i<=presnost;i++){    //read n-tymes for better accurance
+    for(i=1;i<=presnost;i++){    //read n-times for better accurance
     rawVoltage+=(readVcc()/1000.0);
     }
     
